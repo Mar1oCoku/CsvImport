@@ -4,11 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Optional;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,25 @@ public class UploadCsvServiceImpl implements UploadCsvService
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 	
+	@Value("${filePath}")
+	String filePath;
+	
+	@Value("${id}")
+	int id;
+	
+	@Value("${firstName}")
+	int firstName;
+	
+	@Value("${lastname}")
+	int lastname;
+	
+	@Value("${company}")
+	int company;
+	
+	@Value("${status}")
+	int status;
+
+	
 	@Transactional
 	@Override
 	public void importCsvData() 
@@ -46,45 +67,50 @@ public class UploadCsvServiceImpl implements UploadCsvService
 				Company c = new Company();
 				Person p = new Person();
 				
-				if(record.get(4).equals("0"))
+				if(record.get(status).equals("0"))
 				{
 					int b = Integer.parseInt(record.get(0));
 					int a = 6;
 					jdbcTemplate.execute("UPDATE CO_BADGE SET B_STATUS = "+ a + " WHERE B_GUID = "+b);
 				}
 				else				
-				if(record.get(4).equals("1") ) 
+				if(record.get(status).equals("1") ) 
 				{
 					//verifica che la company con la company.description esiste
-					String descriptionById =companyRepository.findDescriptionById(Integer.parseInt(record.get(0)));
+					String descriptionById =companyRepository.findDescriptionById(Integer.parseInt(record.get(id)));
 					//if not exist
-					Company c1 = companyRepository.findDescriptionId(Integer.parseInt(record.get(0)));
+					Company c1 = companyRepository.findDescriptionId(Integer.parseInt(record.get(id)));
 					if(descriptionById == null)
 					{	
 						//c.setId(Long.valueOf(record.get(0)));
-						c.setDescription(record.get(3));
+						c.setDescription(record.get(company));
 						companyRepository.save(c);
 					}
 					else
 					{
-						c1.setDescription(record.get(3));
+						c1.setDescription(record.get(company));
 						companyRepository.save(c1);
 					}
 					
 					//verificare che la persona esiste in CO_PERSON attraverso la person.guid
-					Integer idRecord = personRepository.findIfPersonExists(Integer.parseInt(record.get(0)));
-					//Se esiste il sistema aggiorna nome e cognome e la compan
-					Person p1 = personRepository.findPerson(Integer.parseInt(record.get(0)));
+					Integer idRecord = personRepository.findIfPersonExists(Integer.parseInt(record.get(id)));
+					
 					if(idRecord!=null)
 					{
-						p1.setFirstName(record.get(1));
-						p1.setLastName(record.get(2));
-						p1.setCompany(c1);
+						
+						//Se esiste il sistema aggiorna nome e cognome e la company
+						Optional<Person> opt = personRepository.findPerson(Integer.parseInt(record.get(id)));
+						if(opt.isPresent()) {
+							Person p1 = opt.get();
+						p1.setFirstName(record.get(firstName));
+						p1.setLastName(record.get(lastname));
+						//p1.setCompany(c1);
 						personRepository.save(p1);
+						}
 					}
 					else
 					{
-						p.setPguid(record.get(0));
+						p.setPguid(record.get(id));
 						p.setAddressCity("0");
 						p.setAddressCountry("0");
 						p.setAddressDistrict("0");
@@ -99,12 +125,12 @@ public class UploadCsvServiceImpl implements UploadCsvService
 						p.setCredentials(0L);
 						p.setDateOfBirth("0");
 						p.setEmailAddress("0");
-						p.setFirstName(record.get(1));
-						p.setFullName(record.get(1));
+						p.setFirstName(record.get(firstName));
+						p.setFullName(record.get(firstName));
 						p.setGroups(0L);
 						p.setGroupsNames("0");
 						p.setLanguageCode("0");
-						p.setLastName(record.get(2));
+						p.setLastName(record.get(lastname));
 						p.setLoginUserId(0L);
 						p.setMandant("0");
 						p.setMensa(false);
