@@ -59,7 +59,7 @@ public class UploadCsvServiceImpl implements UploadCsvService
 	{
 		try 
 		{
-			InputStream stream = this.getClass().getResourceAsStream("/csv/andiRenato.CSV");
+			InputStream stream = this.getClass().getResourceAsStream(filePath);
 			CSVParser records = CSVParser.parse(stream, Charset.forName("UTF-8"), CSVFormat.EXCEL.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim().withDelimiter(';'));
 			
 			for (CSVRecord record : records)
@@ -151,7 +151,7 @@ public class UploadCsvServiceImpl implements UploadCsvService
 						p.setType(0L);
 						p.setUser("0");
 						p.setVisName("0");
-						p.setCompany(c);
+						//p.setCompany(c);
 						personRepository.save(p);
 					}
 				}
