@@ -104,7 +104,7 @@ public class UploadCsvServiceImpl implements UploadCsvService
 							Person p1 = opt.get();
 						p1.setFirstName(record.get(firstName));
 						p1.setLastName(record.get(lastname));
-						//p1.setCompany(c1);
+						p1.setCompany(c1);
 						personRepository.save(p1);
 						}
 					}
@@ -151,7 +151,7 @@ public class UploadCsvServiceImpl implements UploadCsvService
 						p.setType(0L);
 						p.setUser("0");
 						p.setVisName("0");
-						//p.setCompany(c);
+						p.setCompany(c);
 						personRepository.save(p);
 					}
 				}
