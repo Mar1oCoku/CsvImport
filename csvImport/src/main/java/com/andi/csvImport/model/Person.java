@@ -96,8 +96,8 @@ public class Person implements Serializable {
 //     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "P_CREDENTIALS")
      @Column(name = "credentials", nullable = true, length = 70)
     private Long credentials= 0L;
-//     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "P_Ext_Company")
-     @Column(name = "company", nullable = true, length = 70)
+     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "P_Ext_Company")
+//     @Column(name = "company", nullable = true, length = 70)
     private Company company;
      @Transient
     private String badgeLabel;
